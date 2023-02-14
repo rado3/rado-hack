@@ -1,7 +1,7 @@
 import argparse
 import pickle
 
-import cupy_prof
+import cupy_RADO
 
 
 def main():
@@ -15,12 +15,12 @@ def main():
         '-cm', '--commits', nargs='+', type=str, default=None, required=False)
     args, paths = parser.parse_known_args()
     if args.repo is None and args.commits is None:
-        collector = cupy_prof.Collector()
+        collector = cupy_RADO.Collector()
         collector.collect(paths)
         dfs = {}
         for bench_class in collector.benchmarks:
             bench = bench_class()
-            df = cupy_prof.Measure(bench).measure(csv=args.csv, plot=args.plot)
+            df = cupy_RADO.Measure(bench).measure(csv=args.csv, plot=args.plot)
             if args.dump_pickle is not None:
                 dfs[bench_class.__name__] = df
         if args.dump_pickle is not None:
@@ -33,7 +33,7 @@ def main():
         if len(args.repo) != 1 and len(args.repo) != len(args.commits):
             raise ValueError(
                 '--repo must be a single repository or one per commit')
-        comparer = cupy_prof.Comparer(args.commits, args.repo, paths)
+        comparer = cupy_RADO.Comparer(args.commits, args.repo, paths)
         comparer.compare(csv=args.csv, plot=args.plot)
 
 
